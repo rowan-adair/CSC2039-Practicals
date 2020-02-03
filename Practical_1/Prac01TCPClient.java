@@ -8,8 +8,6 @@ public class Prac01TCPClient {
 	private Socket socket;
 	private ObjectInputStream iStream;
 	private ObjectOutputStream oStream;
-	private Scanner sc;
-	private boolean validInput;
 
 	public Prac01TCPClient() {
 		// get connections etc
@@ -39,46 +37,33 @@ public class Prac01TCPClient {
 			System.exit(1);
 		}
 
-	}// constructor
+	}
 
 	public void sendData()
 		    { 
 		    try{  	
 		    	while(true)
 		    	{	   			
-					int input = 0;
-					sc = new Scanner(System.in);
-					while(!sc.hasNextInt() && (input > 4 || input < 1)){
-						System.out.println("Enter some integer input to send to the server.");
-						sc.nextLine();
-					}
-					input = sc.nextInt();
-					sc.close();
-			   		//	if user inputs a 4 break out of loop
-					if(input == 4) break;
-					//send to server
-					oStream.writeInt(input);
-					// read information sent back from server
-					String document = iStream.readUTF();
-					// output the document the server sends back - either to the console using System.out or to a JOptionpane
-					System.out.print(document);
+					String input = JOptionPane.showInputDialog("\nEnter a document number 0 to 3 (4 to exit)");
+					int n = Integer.parseInt(input);			
+					oStream.writeObject(n);
+					if(n == 4) break;
+					String document = (String)iStream.readObject();
+					JOptionPane.showMessageDialog(null, "Document : " + n + "\n" + document);
 				}
-				//when communications are complete close streams and socket
 				System.out.println("Closing Client");
 				if(!socket.isClosed()) socket.close();
-				iStream.close();
-				oStream.close();
 		    	
 		    }catch(ClassNotFoundException e){
 				System.out.println(e.getMessage());
 	          	System.exit(1);
-		    }catch(............){
-				//...........
+		    }catch(UnknownHostException e){
+				System.out.println("Unknown Host " + e);
 	          	System.exit(1);
 	    	}
-	    	catch(IOException e) // thrown by method readObject
+	    	catch(IOException e)
 			{	
-				System.out.println(e.getMessage())
+				System.out.println(e.getMessage());
 				System.exit(1);
 			}
 		    	
